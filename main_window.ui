@@ -1,0 +1,611 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1300</width>
+    <height>750</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1300</width>
+    <height>750</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1300</width>
+    <height>750</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Similar PDF Search Tool</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>1</number>
+      </property>
+      <widget class="QWidget" name="similarSearchTab">
+       <attribute name="title">
+        <string>Similar Search</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="similarDrawingsHorizontalLayout">
+        <item>
+         <layout class="QVBoxLayout" name="leftPanelLayout">
+          <item>
+           <widget class="QGroupBox" name="uploadGroup">
+            <property name="title">
+             <string>Upload PDFs</string>
+            </property>
+            <layout class="QVBoxLayout" name="uploadLayout">
+             <item>
+              <widget class="QPushButton" name="selectPdfsBtn">
+               <property name="text">
+                <string>Select PDFs</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="processBtn">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="text">
+                <string>Process PDFs</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QProgressBar" name="uploadProgressBar">
+               <property name="value">
+                <number>0</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="progressLabel">
+               <property name="text">
+                <string>Ready</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="searchGroup">
+            <property name="title">
+             <string>Search Similar PDFs (File)</string>
+            </property>
+            <layout class="QVBoxLayout" name="searchLayout">
+             <item>
+              <widget class="QPushButton" name="selectQueryBtn">
+               <property name="text">
+                <string>Select Query PDF</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="findSimilarBtn">
+               <property name="text">
+                <string>Find Similar PDFs</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="similarConsoleGroup">
+            <property name="title">
+             <string>Console Output</string>
+            </property>
+            <layout class="QVBoxLayout" name="similarConsoleLayout">
+             <item>
+              <widget class="QTextEdit" name="consoleText">
+               <property name="styleSheet">
+                <string>background-color: black; color: white; font-family: Consolas;</string>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QScrollArea" name="resultsScrollArea">
+          <property name="minimumSize">
+           <size>
+            <width>970</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string>background-color: white;</string>
+          </property>
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="resultsWidget">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>968</width>
+             <height>666</height>
+            </rect>
+           </property>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="settingsTab">
+       <attribute name="title">
+        <string>Settings</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="settingsVerticalLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QGroupBox" name="settingsGroupBox">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>500</height>
+           </size>
+          </property>
+          <property name="title">
+           <string/>
+          </property>
+          <widget class="QLabel" name="titleLabel">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>10</y>
+             <width>211</width>
+             <height>25</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>16</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Application Settings</string>
+           </property>
+          </widget>
+          <widget class="QGroupBox" name="directoryGroup">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>40</y>
+             <width>1251</width>
+             <height>171</height>
+            </rect>
+           </property>
+           <property name="title">
+            <string>Data Storage Directory</string>
+           </property>
+           <widget class="QLabel" name="defaultPathTitleLabel">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>30</y>
+              <width>121</width>
+              <height>19</height>
+             </rect>
+            </property>
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="text">
+             <string>Default DB Path:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="indent">
+             <number>0</number>
+            </property>
+           </widget>
+           <widget class="QLabel" name="defaultPathLabel">
+            <property name="geometry">
+             <rect>
+              <x>140</x>
+              <y>30</y>
+              <width>1021</width>
+              <height>19</height>
+             </rect>
+            </property>
+            <property name="styleSheet">
+             <string>color: blue;</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+           <widget class="QLabel" name="customPathTitleLabel">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>50</y>
+              <width>121</width>
+              <height>19</height>
+             </rect>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="text">
+             <string>Custom DB Path:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="indent">
+             <number>0</number>
+            </property>
+           </widget>
+           <widget class="QLabel" name="customPathLabel">
+            <property name="geometry">
+             <rect>
+              <x>140</x>
+              <y>50</y>
+              <width>1021</width>
+              <height>19</height>
+             </rect>
+            </property>
+            <property name="styleSheet">
+             <string>color: gray;</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="text">
+             <string>Not set</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+           <widget class="QLabel" name="activeDirTitleLabel">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>70</y>
+              <width>121</width>
+              <height>19</height>
+             </rect>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="text">
+             <string>Active Directory:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="indent">
+             <number>0</number>
+            </property>
+           </widget>
+           <widget class="QLabel" name="activeDirLabel">
+            <property name="geometry">
+             <rect>
+              <x>140</x>
+              <y>70</y>
+              <width>1021</width>
+              <height>19</height>
+             </rect>
+            </property>
+            <property name="styleSheet">
+             <string>color: green;</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+           <widget class="QCheckBox" name="useCustomCheck">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>100</y>
+              <width>201</width>
+              <height>41</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Use custom data directory path</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="browseCustomBtn">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="geometry">
+             <rect>
+              <x>220</x>
+              <y>100</y>
+              <width>121</width>
+              <height>41</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Browse...</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="applyDirBtn">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="geometry">
+             <rect>
+              <x>350</x>
+              <y>100</y>
+              <width>131</width>
+              <height>41</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Apply Change</string>
+            </property>
+           </widget>
+          </widget>
+          <widget class="QGroupBox" name="excelGroup">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>220</y>
+             <width>561</width>
+             <height>111</height>
+            </rect>
+           </property>
+           <property name="title">
+            <string>Purchase Orders</string>
+           </property>
+           <widget class="QLabel" name="excelFileTitleLabel">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>30</y>
+              <width>131</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="text">
+             <string>Selected File</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="indent">
+             <number>0</number>
+            </property>
+           </widget>
+           <widget class="QLabel" name="excelLabel">
+            <property name="geometry">
+             <rect>
+              <x>150</x>
+              <y>20</y>
+              <width>261</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <property name="styleSheet">
+             <string>font-style: italic;</string>
+            </property>
+            <property name="text">
+             <string>No file selected</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="poCountTitleLabel">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>60</y>
+              <width>131</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="text">
+             <string>Purchase Orders:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="indent">
+             <number>0</number>
+            </property>
+           </widget>
+           <widget class="QLabel" name="poCountLabel">
+            <property name="geometry">
+             <rect>
+              <x>150</x>
+              <y>60</y>
+              <width>71</width>
+              <height>20</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>0</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="loadExcelBtn">
+            <property name="geometry">
+             <rect>
+              <x>420</x>
+              <y>30</y>
+              <width>101</width>
+              <height>51</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Load Excel</string>
+            </property>
+           </widget>
+          </widget>
+          <widget class="QGroupBox" name="searchConfigGroup">
+           <property name="geometry">
+            <rect>
+             <x>580</x>
+             <y>220</y>
+             <width>681</width>
+             <height>111</height>
+            </rect>
+           </property>
+           <property name="title">
+            <string>Search Configuration</string>
+           </property>
+           <widget class="QLabel" name="numResultsLabel">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>30</y>
+              <width>121</width>
+              <height>24</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Number of Results:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="indent">
+             <number>0</number>
+            </property>
+           </widget>
+           <widget class="QLineEdit" name="numResultsEntry">
+            <property name="geometry">
+             <rect>
+              <x>140</x>
+              <y>30</y>
+              <width>111</width>
+              <height>22</height>
+             </rect>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="saveNumResultsBtn">
+            <property name="geometry">
+             <rect>
+              <x>270</x>
+              <y>30</y>
+              <width>75</width>
+              <height>24</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Save</string>
+            </property>
+           </widget>
+          </widget>
+          <widget class="QGroupBox" name="statusGroup">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>340</y>
+             <width>1251</width>
+             <height>351</height>
+            </rect>
+           </property>
+           <property name="title">
+            <string>Status</string>
+           </property>
+           <widget class="QTextEdit" name="statusText">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>20</y>
+              <width>1231</width>
+              <height>311</height>
+             </rect>
+            </property>
+            <property name="styleSheet">
+             <string>background-color: #f0f0f0; font-family: Consolas;</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::Box</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Sunken</enum>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
