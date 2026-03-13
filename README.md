@@ -1,12 +1,12 @@
 # Similar PDF Search Tool
 
-A desktop application for finding visually similar PDF documents using advanced AI-powered image embeddings and cosine similarity matching.
+A desktop application for finding visually similar PDF documents using AI-powered image embeddings and cosine similarity matching.
 
 ## Features
 
 - **Visual PDF Similarity Search**: Find PDFs that are visually similar using deep learning embeddings
-- **PyQt5 GUI**: User-friendly graphical interface for easy interaction
-- **DINOv2 Model**: Leverages the DINOv2 vision transformer model for robust image embeddings
+- **PyQt5 GUI**: Graphical interface for interaction
+- **DINOv2 Model**: DINOv2 small for image embeddings
 - **Local Database**: Store and manage PDF embeddings locally with SQLite
 - **Customizable Settings**: Configure database paths, number of results, and search parameters
 - **Batch Processing**: Process multiple PDFs and build embeddings for your collection
@@ -15,10 +15,10 @@ A desktop application for finding visually similar PDF documents using advanced 
 ## Project Structure
 
 ```
-├── main.py                    # Application entry point
-├── main_window.py            # Main window controller
-├── main_window.ui            # Qt Designer UI file
-├── card.ui                   # Card UI component
+├── main.py                  # Application entry point
+├── main_window.py           # Main window controller
+├── main_window.ui           # Qt Designer UI file
+├── card.ui                  # Card UI component
 ├── func_pdf.py              # PDF processing utilities
 ├── func_similar.py          # Similarity calculation functions
 ├── func_db.py               # Database operations
@@ -26,10 +26,9 @@ A desktop application for finding visually similar PDF documents using advanced 
 ├── func_ui.py               # UI-related functions
 ├── settings.json            # Application settings
 ├── requirements.txt         # Python dependencies
-├── pyproject.toml          # Project configuration
+├── pyproject.toml           # Project configuration
 ├── models/
-│   └── dinov2_int8.onnx    # Quantized DINOv2 model
-└── __pycache__/            # Python cache files
+│   └── dinov2_int8.onnx     # Quantized DINOv2 model
 ```
 
 ## Prerequisites
@@ -38,12 +37,6 @@ A desktop application for finding visually similar PDF documents using advanced 
 - Windows, macOS, or Linux
 
 ## Installation
-
-1. **Clone the repository**:
-```bash
-git clone https://github.com/yourusername/Similar-PDF-Search-Tool.git
-cd Similar-PDF-Search-Tool
-```
 
 2. **Create a virtual environment** (recommended):
 ```bash
@@ -134,12 +127,6 @@ The application uses **DINOv2 (int8 quantized)** for generating embeddings:
 - Provides robust visual embeddings
 - Based on Vision Transformer architecture
 
-## Performance
-
-- **Embedding Generation**: Fast inference using quantized ONNX model
-- **Similarity Search**: O(n) complexity with cosine similarity
-- **Database**: Efficient local SQLite storage
-
 ## Troubleshooting
 
 ### Database Issues
@@ -155,26 +142,6 @@ Delete `settings.json` to reset to default settings.
 
 Contributions are welcome! Please feel free to submit pull requests or open issues for bugs and feature requests.
 
-## License
-
-[Add your license here - e.g., MIT, Apache 2.0, etc.]
-
-## Author
-
-[Your Name/Username]
-
-## Acknowledgments
-
-- [DINOv2](https://github.com/facebookresearch/dinov2) - For the powerful vision transformer model
-- [PyQt5](https://www.riverbankcomputing.com/software/pyqt/) - For the GUI framework
-- [PyMuPDF](https://pymupdf.readthedocs.io/) - For PDF processing
-
 ## Support
 
 If you have any questions or need help, please open an issue on GitHub.
-
----
-
-**Status**: Active Development
-
-**Last Updated**: March 2026
