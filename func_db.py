@@ -2,6 +2,7 @@ import sqlite3
 import pandas as pd
 import os
 import func_json
+import hashlib
 
 
 def get_db_path():
@@ -58,40 +59,128 @@ def create_db():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS embeddings (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            material_code INTEGER NOT NULL UNIQUE,
+            material_code TEXT NOT NULL UNIQUE,
             embedding BLOB NOT NULL,
             image_blob BLOB NOT NULL,
+            file_hash TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
+    
+    # Try to add file_hash column if it doesn't exist (for existing databases)
+    try:
+        cursor.execute("ALTER TABLE embeddings ADD COLUMN file_hash TEXT")
+    except sqlite3.OperationalError:
+        # Column already exists
+        pass
     
     conn.commit()
     conn.close()
 
 
-def insert_pdf_row(filename, embedding_bytes, resized_image_bytes):
+def compute_file_hash(file_path, block_size=65536):
+    """
+    Compute SHA256 hash of a file
+    
+    Args:
+        file_path: Path to the file
+        block_size: Size of blocks to read (default 64KB)
+    
+    Returns:
+        SHA256 hash string
+    """
+    sha256_hash = hashlib.sha256()
+    
+    try:
+        with open(file_path, "rb") as f:
+            for block in iter(lambda: f.read(block_size), b""):
+                sha256_hash.update(block)
+        return sha256_hash.hexdigest()
+    except Exception as e:
+        print(f"Error computing file hash: {e}")
+        return None
+
+
+def check_duplicate_by_hash_and_similarity(file_hash, embedding_bytes, similarity_threshold=0.90):
+    """
+    Check if a duplicate exists by file hash and similarity threshold
+    
+    Args:
+        file_hash: SHA256 hash of the file
+        embedding_bytes: Embedding bytes of the file
+        similarity_threshold: Similarity threshold for duplicate detection
+    
+    Returns:
+        tuple: (is_duplicate, duplicate_info) where duplicate_info is dict with details
+    """
+    try:
+        from func_similar import normalize_query_embedding, calculate_cosine_similarity
+        
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        
+        # Check for exact hash match
+        cursor.execute(
+            'SELECT id, material_code, embedding FROM embeddings WHERE file_hash = ?',
+            (file_hash,)
+        )
+        exact_match = cursor.fetchone()
+        
+        if exact_match:
+            conn.close()
+            return (True, {
+                'type': 'exact_hash_match',
+                'material_code': exact_match[1],
+                'similarity': 1.0
+            })
+        
+        # Check for similarity-based duplicates
+        cursor.execute('SELECT id, material_code, embedding FROM embeddings')
+        all_records = cursor.fetchall()
+        conn.close()
+        
+        if not all_records:
+            return (False, None)
+        
+        query_embedding = normalize_query_embedding(embedding_bytes)
+        
+        for record_id, material_code, stored_embedding in all_records:
+            similarity = calculate_cosine_similarity(query_embedding, stored_embedding)
+            
+            if similarity >= similarity_threshold:
+                return (True, {
+                    'type': 'similarity_match',
+                    'material_code': material_code,
+                    'similarity': similarity
+                })
+        
+        return (False, None)
+    
+    except Exception as e:
+        print(f"Error checking duplicates: {e}")
+        return (False, None)
+
+
+def insert_pdf_row(filename, embedding_bytes, resized_image_bytes, file_hash=None):
     """
     Insert PDF data into database
     
     Args:
-        db_path: Path to SQLite database
         filename: Original filename
         embedding_bytes: Pre-generated embedding bytes
         resized_image_bytes: Pre-processed resized image bytes
+        file_hash: SHA256 hash of the file (optional)
     
     Returns:
         Row ID of inserted record
     """
-    # Get first 9 characters of filename
-    short_filename = filename
-    
     # Insert into database
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     cursor.execute("""
-        INSERT INTO embeddings (material_code, embedding, image_blob)
-        VALUES (?, ?, ?)
-    """, (short_filename, embedding_bytes, resized_image_bytes))
+        INSERT INTO embeddings (material_code, embedding, image_blob, file_hash)
+        VALUES (?, ?, ?, ?)
+    """, (filename, embedding_bytes, resized_image_bytes, file_hash))
     
     row_id = cursor.lastrowid
     conn.commit()
@@ -138,17 +227,6 @@ def fetch_embeddings_from_db():
     
     conn.close()
     return rows
-
-
-
-def count_po():
-    """
-    Return the count of purchase orders (no longer used as price functionality removed)
-    
-    Returns:
-        0 (price table no longer exists)
-    """
-    return 0
 
 
 def delete_record_by_material_code(material_code):

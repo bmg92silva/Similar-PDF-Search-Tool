@@ -49,13 +49,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.browseCustomBtn = self.findChild(QtWidgets.QPushButton, "browseCustomBtn")
         self.applyDirBtn = self.findChild(QtWidgets.QPushButton, "applyDirBtn")
 
-        # Excel (Purchase Orders) group
-        self.excelLabel = self.findChild(QtWidgets.QLabel, "excelLabel")
-        self.poCountLabel = self.findChild(QtWidgets.QLabel, "poCountLabel")
-        self.loadExcelBtn = self.findChild(QtWidgets.QPushButton, "loadExcelBtn")
-
         # Search configuration group
         self.numResultsEntry = self.findChild(QtWidgets.QLineEdit, "numResultsEntry")
+        self.similarityThresholdEntry = self.findChild(QtWidgets.QLineEdit, "similarityThresholdEntry")
         self.saveNumResultsBtn = self.findChild(QtWidgets.QPushButton, "saveNumResultsBtn")
 
         # Status group
@@ -76,11 +72,6 @@ class MainWindow(QtWidgets.QMainWindow):
         # Settings: directories
         self.browseCustomBtn.clicked.connect(self.on_browse_custom_clicked)
         self.applyDirBtn.clicked.connect(self.on_apply_dir_clicked)
-
-        # Settings: credentials - REMOVED (SAP functionality disabled)
-
-        # Settings: Excel / POs
-        self.loadExcelBtn.clicked.connect(self.on_load_excel_clicked)
 
         # Settings: search configuration
         self.saveNumResultsBtn.clicked.connect(self.on_save_num_results_clicked)
@@ -115,6 +106,10 @@ class MainWindow(QtWidgets.QMainWindow):
         processed_count = 0
         failed_files = []
         
+        # Load similarity threshold setting
+        saved_settings = func_json.load_settings()
+        similarity_threshold = saved_settings.get('similarity_threshold', 0.90)
+        
         # Initialize progress bar
         total_files = len(self.selected_pdfs)
         self.uploadProgressBar.setRange(0, total_files)
@@ -126,23 +121,42 @@ class MainWindow(QtWidgets.QMainWindow):
                 # Convert first page of PDF to image
                 image_bytes, filename = func_pdf.pdf_to_image(pdf_path, page_num=0)
                 
+                # Compute file hash
+                file_hash = func_db.compute_file_hash(pdf_path)
+                self.consoleText.append(f"Processing: {filename}")
+                
                 # Check if material code exists
                 if func_db.material_code_exists(filename):
-                    self.consoleText.append("Material code already exists")
+                    self.consoleText.append(f"⚠️ Material code already exists: {filename}")
                 else:
-                    self.consoleText.append("Material code is new")
                     # Generate embedding
                     try:
                         embedding_bytes, image_bytes = func_pdf.embedding_pipeline(image_bytes)
-                        self.consoleText.append("Embedding generated.")
+                        self.consoleText.append("✓ Embedding generated.")
                     except Exception as e:
-                        self.consoleText.append(f"Error generating embedding: {e}")
+                        self.consoleText.append(f"✗ Error generating embedding: {e}")
+                        raise
+                    
+                    # Check for duplicates by hash and similarity
+                    is_duplicate, duplicate_info = func_db.check_duplicate_by_hash_and_similarity(
+                        file_hash, embedding_bytes, similarity_threshold
+                    )
+                    
+                    if is_duplicate:
+                        self.consoleText.append(
+                            f"⚠️ Potential duplicate found!\n"
+                            f"   Type: {duplicate_info['type']}\n"
+                            f"   Duplicate of: {duplicate_info['material_code']}\n"
+                            f"   Similarity: {duplicate_info['similarity']:.4f}"
+                        )
+                    
                     # Add PDF to DB
                     try:
-                        row_id = func_db.insert_pdf_row(filename, embedding_bytes, image_bytes)
-                        self.consoleText.append(f"PDF inserted into database: row ID {row_id}")
+                        row_id = func_db.insert_pdf_row(filename, embedding_bytes, image_bytes, file_hash)
+                        self.consoleText.append(f"✓ PDF inserted into database: row ID {row_id}")
                     except Exception as e:
-                        self.consoleText.append(f"Error inserting PDF image into database: {e}")
+                        self.consoleText.append(f"✗ Error inserting PDF into database: {e}")
+                        raise
                 
                 processed_count += 1
                 
@@ -174,16 +188,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 f"Successfully processed all {processed_count} PDF file(s)"
             )
 
-    def on_download_search_clicked(self):
-        # SAP download functionality has been disabled
-        self.consoleText.append("Download from SAP has been disabled - SAP functionality removed")
-        QMessageBox.information(
-            self,
-            "SAP Download Disabled",
-            "Download from SAP functionality has been removed from this application.\n\n"
-            "To use this feature, please upload PDF files directly using the 'Upload PDFs' button."
-        )
-
 
     def on_select_query_clicked(self):
         # Open file dialog to select a single PDF file
@@ -200,20 +204,35 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         
         image_bytes, filename = func_pdf.pdf_to_image(self.single_pdf)
-        self.consoleText.append("PDF bytes converted to image.")
+        self.consoleText.append(f"Searching for PDFs similar to: {filename}")
+        self.consoleText.append("Converting PDF to image...")
         
         # Generate embedding
         try:
             embedding_bytes, image_bytes = func_pdf.embedding_pipeline(image_bytes)
-            self.consoleText.append("Embedding generated.")
+            self.consoleText.append("✓ Embedding generated.")
         except Exception as e:
-            self.consoleText.append(f"Error generating embedding: {e}")
+            self.consoleText.append(f"✗ Error generating embedding: {e}")
             return
-                
+        
+        # Load settings for number of results
+        saved_settings = func_json.load_settings()
+        num_results = saved_settings.get('num_results', 12)
+        
         # Get similar embeddings with images
-        results = func_similar.find_similar_pipeline(embedding_bytes, top_k=12)
+        results = func_similar.find_similar_pipeline(embedding_bytes, top_k=num_results)
+        
+        # Print results to console
+        if results:
+            self.consoleText.append(f"\n✓ Found {len(results)} similar PDFs:\n")
+            for idx, (material_code, similarity, _) in enumerate(results, 1):
+                self.consoleText.append(f"{idx}. {material_code}\n   Similarity: {similarity:.4f}\n")
+            self.consoleText.append("")
+        else:
+            self.consoleText.append("⚠️ No similar PDFs found in database.")
+        
+        # Display results in grid
         func_ui.populate_results_scroll_area(self.resultsScrollArea, results)
-        pass
 
     def on_browse_custom_clicked(self):
         directory_path = QFileDialog.getExistingDirectory(self, "Select Directory", "")
@@ -239,36 +258,29 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def on_save_num_results_clicked(self):
         text = self.numResultsEntry.text().strip()
+        threshold_text = self.similarityThresholdEntry.text().strip()
 
         if text == "":
-            QMessageBox.warning(self, "Error", "Please enter a valid number")
+            QMessageBox.warning(self, "Error", "Please enter a valid number of results")
+            return
+
+        if threshold_text == "":
+            QMessageBox.warning(self, "Error", "Please enter a valid similarity threshold")
             return
 
         try:
             num_results = int(text)
             if num_results <= 0:
-                QMessageBox.warning(self, "Error", "Please enter a positive number")
+                QMessageBox.warning(self, "Error", "Please enter a positive number for results")
+                return
+            
+            similarity_threshold = float(threshold_text)
+            if similarity_threshold < 0 or similarity_threshold > 1:
+                QMessageBox.warning(self, "Error", "Similarity threshold must be between 0 and 1")
                 return
 
-            func_json.save_settings(num_results=num_results)
-            QMessageBox.information(self, "Save Number of Results", 
-                                  f"Number of results saved: {num_results}")
+            func_json.save_settings(num_results=num_results, similarity_threshold=similarity_threshold)
+            QMessageBox.information(self, "Save Settings", 
+                                  f"Settings saved:\nNumber of results: {num_results}\nSimilarity threshold: {similarity_threshold}")
         except ValueError:
-            QMessageBox.warning(self, "Error", "Please enter a valid number")
-
-    def on_load_excel_clicked(self):
-        file_path, _ = QFileDialog.getOpenFileName(
-            self, "Select Excel File", "", 
-            "Excel Files (*.xlsx *.xls);;All Files (*)"
-        )
-
-        if file_path:
-            self.excelLabel.setText(os.path.basename(file_path))
-            self.statusText.append(f"Selected Excel file: {file_path}")
-            self.statusText.append("Price loading functionality has been removed.")
-        else:
-            self.statusText.append(f"Selected Excel file: {file_path}")
-        num_po = func_db.count_po()
-        self.poCountLabel.setText(str(num_po))
-
-    # REMOVED: on_save_credentials_clicked - SAP functionality disabled
+            QMessageBox.warning(self, "Error", "Please enter valid numbers")

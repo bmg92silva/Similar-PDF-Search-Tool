@@ -46,7 +46,7 @@ def pdf_to_image(pdf_path, page_num=0, max_dimension=1000):
     image_bytes = pix.tobytes("png")
    
     # Extract filename from path
-    filename = os.path.basename(pdf_path)[:9]
+    filename = os.path.basename(pdf_path)
    
     # Clean up
     doc.close()

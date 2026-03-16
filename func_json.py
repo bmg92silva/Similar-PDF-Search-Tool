@@ -14,7 +14,8 @@ def create_settings_if_not_exists(json_filepath='settings.json'):
     default_settings = {
         "use_custom_path": False,
         "custom_db_path": "",
-        "num_results": 10
+        "num_results": 10,
+        "similarity_threshold": 0.90
     }
     
     if not os.path.exists(json_filepath):
@@ -41,7 +42,8 @@ def load_settings(json_filepath='settings.json'):
     default_settings = {
         "use_custom_path": False,
         "custom_db_path": "",
-        "num_results": 10
+        "num_results": 10,
+        "similarity_threshold": 0.90
     }
     
     if os.path.exists(json_filepath):
@@ -57,7 +59,7 @@ def load_settings(json_filepath='settings.json'):
 
 import json
 
-def save_settings( use_custom_path=None, custom_db_path=None, num_results=None, json_filepath='settings.json'):
+def save_settings( use_custom_path=None, custom_db_path=None, num_results=None, similarity_threshold=None, json_filepath='settings.json'):
     """
     Modify settings.json file with provided parameters.
     Only updates fields that are not None/empty.
@@ -67,6 +69,7 @@ def save_settings( use_custom_path=None, custom_db_path=None, num_results=None, 
     - use_custom_path: bool or None - Whether to use custom path
     - custom_db_path: str or None - Custom database path
     - num_results: int or None - Number of results
+    - similarity_threshold: float or None - Similarity threshold for duplicate detection
     """
     # Read the existing JSON file
     with open(json_filepath, 'r') as f:
@@ -82,6 +85,9 @@ def save_settings( use_custom_path=None, custom_db_path=None, num_results=None, 
     
     if num_results is not None:
         config["num_results"] = num_results
+    
+    if similarity_threshold is not None:
+        config["similarity_threshold"] = similarity_threshold
     
     # Write back to the file
     with open(json_filepath, 'w') as f:

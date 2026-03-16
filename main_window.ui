@@ -407,112 +407,13 @@
             </property>
            </widget>
           </widget>
-          <widget class="QGroupBox" name="excelGroup">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>220</y>
-             <width>561</width>
-             <height>111</height>
-            </rect>
-           </property>
-           <property name="title">
-            <string>Purchase Orders</string>
-           </property>
-           <widget class="QLabel" name="excelFileTitleLabel">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>30</y>
-              <width>131</width>
-              <height>16</height>
-             </rect>
-            </property>
-            <property name="frameShape">
-             <enum>QFrame::NoFrame</enum>
-            </property>
-            <property name="text">
-             <string>Selected File</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="indent">
-             <number>0</number>
-            </property>
-           </widget>
-           <widget class="QLabel" name="excelLabel">
-            <property name="geometry">
-             <rect>
-              <x>150</x>
-              <y>20</y>
-              <width>261</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="styleSheet">
-             <string>font-style: italic;</string>
-            </property>
-            <property name="text">
-             <string>No file selected</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="poCountTitleLabel">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>60</y>
-              <width>131</width>
-              <height>16</height>
-             </rect>
-            </property>
-            <property name="frameShape">
-             <enum>QFrame::NoFrame</enum>
-            </property>
-            <property name="text">
-             <string>Purchase Orders:</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="indent">
-             <number>0</number>
-            </property>
-           </widget>
-           <widget class="QLabel" name="poCountLabel">
-            <property name="geometry">
-             <rect>
-              <x>150</x>
-              <y>60</y>
-              <width>71</width>
-              <height>20</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>0</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="loadExcelBtn">
-            <property name="geometry">
-             <rect>
-              <x>420</x>
-              <y>30</y>
-              <width>101</width>
-              <height>51</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Load Excel</string>
-            </property>
-           </widget>
-          </widget>
           <widget class="QGroupBox" name="searchConfigGroup">
            <property name="geometry">
             <rect>
              <x>580</x>
              <y>220</y>
              <width>681</width>
-             <height>111</height>
+             <height>130</height>
             </rect>
            </property>
            <property name="title">
@@ -558,6 +459,35 @@
             </property>
             <property name="text">
              <string>Save</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="similarityThresholdLabel">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>60</y>
+              <width>121</width>
+              <height>24</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Similarity Threshold:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="indent">
+             <number>0</number>
+            </property>
+           </widget>
+           <widget class="QLineEdit" name="similarityThresholdEntry">
+            <property name="geometry">
+             <rect>
+              <x>140</x>
+              <y>60</y>
+              <width>111</width>
+              <height>22</height>
+             </rect>
             </property>
            </widget>
           </widget>

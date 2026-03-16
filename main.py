@@ -29,10 +29,12 @@ def main():
     use_custom = saved_settings['use_custom_path']
     custom_db_path = saved_settings['custom_db_path']
     num_results = saved_settings['num_results']
+    similarity_threshold = saved_settings.get('similarity_threshold', 0.90)
 
     window.statusText.append(
         f"Loaded settings: use_custom={use_custom}, "
-        f"db_path={custom_db_path}, num_results={num_results}"
+        f"db_path={custom_db_path}, num_results={num_results}, "
+        f"similarity_threshold={similarity_threshold}"
     )
 
     # Apply custom path setting
@@ -79,13 +81,15 @@ def main():
     else:
         window.numResultsEntry.setText("12")
 
+    # Apply similarity threshold
+    if similarity_threshold:
+        window.similarityThresholdEntry.setText(str(similarity_threshold))
+    else:
+        window.similarityThresholdEntry.setText("0.90")
+
     # Reload DB path after potential fallback settings update
     func_db.db_path = func_db.get_db_path()
     window.statusText.append(f"Using DB path: {func_db.db_path}")
-
-    # ----------------- Count the POs in DB ------------------------------
-    num_po = func_db.count_po()
-    window.poCountLabel.setText(str(num_po))
 
     # ------------------------------------------------------------------------
     sys.exit(app.exec_())
