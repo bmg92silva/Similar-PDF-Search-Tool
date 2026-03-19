@@ -2,3 +2,4 @@ __pycache__/
 data.db
 settings.json
 pdfs/
+models/__pycache__/
